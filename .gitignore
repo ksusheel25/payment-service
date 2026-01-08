@@ -1,0 +1,45 @@
+# IntelliJ IDEA
+/.idea/
+/*.iml
+/out/
+/target/
+
+# Maven
+/logs/
+/.mvn/wrapper/maven-wrapper.jar
+**/dependency-reduced-pom.xml
+**/release.properties
+
+# Spring Boot
+*.class
+*.log
+*.tmp
+
+# H2 database (in-memory)
+*.h2.db
+*.h2.trace.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+*.env
+
+# Eclipse (agar kisi ne use kiya ho)
+.settings/
+.project
+.classpath
+
+# VSCode
+.vscode/
+
+# Node / frontend (agar frontend folder bhi hai)
+node_modules/
+dist/
+build/
+
+# Other temporary files
+*.swp
+*.swo
