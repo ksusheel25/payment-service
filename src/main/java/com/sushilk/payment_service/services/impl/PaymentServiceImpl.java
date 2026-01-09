@@ -61,7 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // 2️⃣ Create Payment (CREATED status)
-        Payment payment = Payment.builder()
+        Payment.PaymentBuilder paymentBuilder = Payment.builder()
                 .userId(req.userId())
                 .orderId(req.orderId())
                 .orderType(req.orderType())
@@ -70,8 +70,21 @@ public class PaymentServiceImpl implements PaymentService {
                 .provider(req.provider())
                 .paymentMethod(req.paymentMethod())
                 .status(PaymentStatus.CREATED)
-                .idempotencyKey(req.idempotencyKey())
-                .build();
+                .idempotencyKey(req.idempotencyKey());
+
+        // Set beneficiary details if provided
+        if (req.beneficiaryDetails() != null) {
+            paymentBuilder
+                    .beneficiaryId(req.beneficiaryDetails().beneficiaryId())
+                    .beneficiaryName(req.beneficiaryDetails().beneficiaryName())
+                    .beneficiaryType(req.beneficiaryDetails().beneficiaryType())
+                    .beneficiaryAccount(req.beneficiaryDetails().beneficiaryAccount());
+            log.info("Payment includes beneficiary: {} ({})", 
+                    req.beneficiaryDetails().beneficiaryId(),
+                    req.beneficiaryDetails().getMaskedAccount());
+        }
+
+        Payment payment = paymentBuilder.build();
         payment = paymentRepository.save(payment);
         log.info("Created payment with id: {}", payment.getPaymentId());
 
@@ -80,9 +93,12 @@ public class PaymentServiceImpl implements PaymentService {
             List<PaymentAttempt> previousAttempts = attemptRepository.findByPaymentId(payment.getPaymentId());
             int attemptNo = previousAttempts.size() + 1;
 
-            // Log card details safely (masked) if present
+            // Log payment details safely (masked) if present
             if (req.cardDetails() != null) {
                 log.info("Processing card payment with masked card: {}", req.cardDetails().getMaskedCardNumber());
+            }
+            if (req.upiDetails() != null) {
+                log.info("Processing UPI payment with masked UPI ID: {}", req.upiDetails().getMaskedUPIId());
             }
 
             PaymentAttempt attempt = PaymentAttempt.builder()
@@ -287,6 +303,49 @@ public class PaymentServiceImpl implements PaymentService {
                     cardDetailsMap.put("cvv", "***");
                     cardDetailsMap.put("expiryDate", "**/**");
                     // Keep cardholderName as it's not considered sensitive for audit purposes
+                }
+            }
+
+            // Mask sensitive UPI details before storing
+            if (req.upiDetails() != null && requestMap.containsKey("upiDetails")) {
+                Object upiDetailsObj = requestMap.get("upiDetails");
+                if (upiDetailsObj instanceof Map) {
+                    Map<String, Object> upiDetailsMap = (Map<String, Object>) upiDetailsObj;
+                    // Mask sensitive UPI information
+                    upiDetailsMap.put("upiId", req.upiDetails().getMaskedUPIId());
+                    if (req.upiDetails().phoneNumber() != null) {
+                        upiDetailsMap.put("phoneNumber", req.upiDetails().getMaskedPhoneNumber());
+                    }
+                }
+            }
+
+            // Mask sensitive net banking details before storing
+            if (req.netBankingDetails() != null && requestMap.containsKey("netBankingDetails")) {
+                Object netBankingObj = requestMap.get("netBankingDetails");
+                if (netBankingObj instanceof Map) {
+                    Map<String, Object> netBankingMap = (Map<String, Object>) netBankingObj;
+                    // Mask customer ID if present
+                    if (req.netBankingDetails().customerId() != null) {
+                        netBankingMap.put("customerId", req.netBankingDetails().getMaskedCustomerId());
+                    }
+                }
+            }
+
+            // Mask sensitive beneficiary account details before storing
+            if (req.beneficiaryDetails() != null && requestMap.containsKey("beneficiaryDetails")) {
+                Object beneficiaryObj = requestMap.get("beneficiaryDetails");
+                if (beneficiaryObj instanceof Map) {
+                    Map<String, Object> beneficiaryMap = (Map<String, Object>) beneficiaryObj;
+                    // Mask beneficiary account/UPI ID
+                    if (req.beneficiaryDetails().beneficiaryAccount() != null) {
+                        beneficiaryMap.put("beneficiaryAccount", req.beneficiaryDetails().getMaskedAccount());
+                    }
+                    // Mask account number if present
+                    if (req.beneficiaryDetails().accountNumber() != null) {
+                        beneficiaryMap.put("accountNumber", "****" + 
+                                req.beneficiaryDetails().accountNumber().substring(
+                                        Math.max(0, req.beneficiaryDetails().accountNumber().length() - 4)));
+                    }
                 }
             }
             

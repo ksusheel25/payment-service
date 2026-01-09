@@ -3,7 +3,7 @@ package com.sushilk.payment_service.dtos;
 import com.sushilk.payment_service.enums.OrderType;
 import com.sushilk.payment_service.enums.PaymentMethod;
 import com.sushilk.payment_service.enums.PaymentProvider;
-import com.sushilk.payment_service.validation.CardDetailsRequired;
+import com.sushilk.payment_service.validation.PaymentDetailsRequired;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -14,7 +14,7 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
-@CardDetailsRequired
+@PaymentDetailsRequired
 public record InitiatePaymentRequest(
         @NotBlank(message = "User ID is required and cannot be blank")
         @Size(min = 1, max = 100, message = "User ID must be between 1 and 100 characters")
@@ -24,7 +24,7 @@ public record InitiatePaymentRequest(
         @Size(min = 1, max = 100, message = "Order ID must be between 1 and 100 characters")
         String orderId,
 
-        @NotNull(message = "Order type is required. Valid values: PRODUCT, SUBSCRIPTION, WALLET")
+        @NotNull(message = "Order type is required. Valid values: PRODUCT, SUBSCRIPTION, WALLET, P2P, BILL_PAYMENT, DONATION")
         OrderType orderType,
 
         @NotNull(message = "Amount is required")
@@ -48,10 +48,31 @@ public record InitiatePaymentRequest(
         String idempotencyKey,
 
         /**
-         * Card details - required only when paymentMethod is CARD
+         * Card details - required when provider is CARD
          * Should be validated using @Valid to trigger nested validation
          */
         @Valid
-        CardDetails cardDetails
+        CardDetails cardDetails,
+
+        /**
+         * UPI details - required when provider is PHONEPE, PAYTM, or GOOGLEPAY
+         * Should be validated using @Valid to trigger nested validation
+         */
+        @Valid
+        UPIDetails upiDetails,
+
+        /**
+         * Beneficiary/Recipient details - required for P2P, BILL_PAYMENT, DONATION
+         * Optional for PRODUCT, SUBSCRIPTION (merchant info can be derived from orderId)
+         */
+        @Valid
+        BeneficiaryDetails beneficiaryDetails,
+
+        /**
+         * Net banking details - required only when paymentMethod is NET_BANKING
+         * Should be validated using @Valid to trigger nested validation
+         */
+        @Valid
+        NetBankingDetails netBankingDetails
 ) {}
 

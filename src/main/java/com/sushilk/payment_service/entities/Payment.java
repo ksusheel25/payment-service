@@ -60,5 +60,31 @@ public class Payment extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String idempotencyKey;
+
+    /**
+     * Beneficiary ID - recipient of the payment
+     * Required for P2P, BILL_PAYMENT, DONATION
+     * Optional for PRODUCT, SUBSCRIPTION (merchant ID can be derived from orderId)
+     */
+    @Column(length = 100)
+    private String beneficiaryId;
+
+    /**
+     * Beneficiary name - for display/receipt purposes
+     */
+    @Column(length = 200)
+    private String beneficiaryName;
+
+    /**
+     * Beneficiary type - USER, MERCHANT, BANK_ACCOUNT, WALLET, etc.
+     */
+    @Column(length = 50)
+    private String beneficiaryType;
+
+    /**
+     * Beneficiary account/UPI ID for direct transfers
+     */
+    @Column(length = 256)
+    private String beneficiaryAccount;
 }
 
