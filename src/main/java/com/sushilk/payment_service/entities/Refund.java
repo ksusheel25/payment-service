@@ -1,5 +1,6 @@
 package com.sushilk.payment_service.entities;
 
+import com.sushilk.payment_service.enums.RefundStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,9 +23,12 @@ public class Refund extends BaseEntity {
     @Column(nullable = false)
     private UUID paymentId;
 
+    @Column(nullable = false)
     private BigDecimal amount;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RefundStatus status;
 
     private String reason;
 

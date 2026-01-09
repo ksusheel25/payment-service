@@ -37,20 +37,25 @@ public class Payment extends BaseEntity {
     private String orderId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderType orderType;
 
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Column(nullable = false)
     private String currency;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PaymentStatus status;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PaymentProvider provider;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
     @Column(nullable = false, unique = true)

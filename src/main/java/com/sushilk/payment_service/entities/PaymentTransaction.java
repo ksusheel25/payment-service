@@ -1,6 +1,6 @@
 package com.sushilk.payment_service.entities;
 
-import com.sushilk.payment_service.enums.PaymentStatus;
+import com.sushilk.payment_service.enums.TransactionStatus;
 import com.sushilk.payment_service.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,28 +10,30 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "payment_transactions")
-@Builder
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper=false)
+@Builder
 public class PaymentTransaction extends BaseEntity {
 
     @Id
     @GeneratedValue
-    private UUID transactionId;  // ✅ unique identifier for this entity
+    private UUID transactionId;
 
-    @ManyToOne
-    @JoinColumn(name = "payment_id")
-    private Payment payment;
+    @Column(nullable = false)
+    private UUID paymentId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TransactionType transactionType;
 
+    @Column(nullable = false)
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status;
+    @Column(nullable = false)
+    private TransactionStatus status;
 
     private String description;
 }

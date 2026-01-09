@@ -1,5 +1,6 @@
 package com.sushilk.payment_service.entities;
 
+import com.sushilk.payment_service.enums.PaymentAttemptStatus;
 import com.sushilk.payment_service.enums.PaymentProvider;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,11 +24,15 @@ public class PaymentAttempt extends BaseEntity {
     private UUID paymentId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private PaymentProvider provider;
 
+    @Column(nullable = false)
     private Integer attemptNo;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentAttemptStatus status;
 
     @Lob
     @Column(columnDefinition = "CLOB")
