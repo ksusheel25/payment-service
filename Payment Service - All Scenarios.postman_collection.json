@@ -1,0 +1,254 @@
+{
+	"info": {
+		"_postman_id": "d0265bc3-e3fa-49e4-a90b-10e786c5ec3b",
+		"name": "Payment Service - All Scenarios",
+		"description": "Complete Postman collection for Payment Service testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24833441"
+	},
+	"item": [
+		{
+			"name": "Initiate Payment - SUCCESS",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"INR\",\n  \"orderId\": \"ORD-101\",\n  \"orderType\": \"PRODUCT\",\n  \"paymentMethod\": \"CARD\",\n  \"provider\": \"CARD\",\n  \"userId\": \"USER-1\",\n  \"idempotencyKey\": \"idem-101\",\n  \"description\": \"Order payment\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payments/initiate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payments",
+						"initiate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Initiate Payment - SUCCESS CARD",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"INR\",\n  \"orderId\": \"ORD-101\",\n  \"orderType\": \"PRODUCT\",\n  \"paymentMethod\": \"CARD\",\n  \"provider\": \"CARD\",\n  \"userId\": \"USER-1\",\n  \"idempotencyKey\": \"idem-101\",\n  \"description\": \"Order payment\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payments/initiate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payments",
+						"initiate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Initiate Payment - DUPLICATE (Idempotency)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amount\": 100.50,\n  \"currency\": \"INR\",\n  \"orderId\": \"ORD-101\",\n  \"orderType\": \"PRODUCT\",\n  \"paymentMethod\": \"CARD\",\n  \"provider\": \"CARD\",\n  \"userId\": \"USER-1\",\n  \"idempotencyKey\": \"idem-101\",\n  \"description\": \"Duplicate payment\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payments/initiate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payments",
+						"initiate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Initiate Payment - INVALID AMOUNT",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"amount\": -10,\n  \"currency\": \"INR\",\n  \"orderId\": \"ORD-102\",\n  \"orderType\": \"PRODUCT\",\n  \"paymentMethod\": \"CARD\",\n  \"provider\": \"CARD\",\n  \"userId\": \"USER-2\",\n  \"idempotencyKey\": \"idem-102\",\n  \"description\": \"Invalid amount\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payments/initiate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payments",
+						"initiate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refund Payment - FULL REFUND",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"paymentId\": \"REPLACE_WITH_PAYMENT_ID\",\n  \"amount\": 100.50,\n  \"reason\": \"Customer requested refund\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payments/refund",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payments",
+						"refund"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refund Payment - PARTIAL REFUND",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"paymentId\": \"REPLACE_WITH_PAYMENT_ID\",\n  \"amount\": 50.00,\n  \"reason\": \"Partial refund\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payments/refund",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payments",
+						"refund"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refund Payment - INVALID PAYMENT ID",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"paymentId\": \"00000000-0000-0000-0000-000000000000\",\n  \"amount\": 10.00,\n  \"reason\": \"Invalid payment\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payments/refund",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payments",
+						"refund"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actuator - Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/actuator/health",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"actuator",
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Actuator - Metrics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/actuator/metrics",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"actuator",
+						"metrics"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
